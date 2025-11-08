@@ -40,9 +40,23 @@ class TooManyProductsFoundError:
 #   (2) możliwość odwołania się do atrybutu klasowego `n_max_returned_entries` (typu int) wyrażający maksymalną dopuszczalną liczbę wyników wyszukiwania,
 #   (3) możliwość odwołania się do metody `get_entries(self, n_letters)` zwracającą listę produktów spełniających kryterium wyszukiwania
  
-class ListServer(Product):
-    def __init__(self, products: list):
-        super().
+class ListServer:
+    n_max_returned_entries: int = 6
+    def __init__(self, products_list: list[Product]):
+        self.products: list[Product]  = list(products_list)
+    def get_entries(self, n_letters: int):
+        wyniki = []
+        for x in self.products:
+            nazwa = x.name
+            indeks=-1
+            for i, j in enumerate(nazwa):
+                if j.isdigit():
+                    indeks = i # indeks pierwszej cyfry odpowiada długości części literowej
+                    break
+            if indeks == n_letters:
+                wyniki.append(x)
+        return wyniki[:self.n_max_returned_entries]
+    
  
  
 class MapServer:
@@ -51,6 +65,6 @@ class MapServer:
  
 class Client:
     # FIXME: klasa powinna posiadać metodę inicjalizacyjną przyjmującą obiekt reprezentujący serwer
- 
+
     def get_total_price(self, n_letters: Optional[int]) -> Optional[float]:
         raise NotImplementedError()
