@@ -5,7 +5,20 @@ class Product:
     # FIXME: klasa powinna posiadać metodę inicjalizacyjną przyjmującą argumenty wyrażające nazwę produktu (typu str) i jego cenę (typu float) -- w takiej kolejności -- i ustawiającą atrybuty `name` (typu str) oraz `price` (typu float)
 
     def __init__(self, name: str, price: float):
-        if name == "" or not name[0].isalpha() or name[-1].isalpha() or price ==0:
+        if not isinstance(name, str) or not isinstance(price, float):
+            raise TypeError("Niewłaściwe typy danych")
+        if price <= 0:
+            raise ValueError
+        pierwsza_cyfra = -1
+        for i, char in enumerate(name):
+            if char.isdigit():
+                pierwsza_cyfra = i
+                break
+        if pierwsza_cyfra <= 0: 
+            raise ValueError
+        litery = name[:pierwsza_cyfra]
+        cyfry = name[pierwsza_cyfra:]
+        if not litery.isalpha() or not cyfry.isdigit():
             raise ValueError
         self.name=name
         self.price = price
@@ -27,8 +40,9 @@ class TooManyProductsFoundError:
 #   (2) możliwość odwołania się do atrybutu klasowego `n_max_returned_entries` (typu int) wyrażający maksymalną dopuszczalną liczbę wyników wyszukiwania,
 #   (3) możliwość odwołania się do metody `get_entries(self, n_letters)` zwracającą listę produktów spełniających kryterium wyszukiwania
  
-class ListServer:
-    pass
+class ListServer(Product):
+    def __init__(self, products: list):
+        super().
  
  
 class MapServer:
