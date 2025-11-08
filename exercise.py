@@ -5,8 +5,6 @@ class Product:
     # FIXME: klasa powinna posiadać metodę inicjalizacyjną przyjmującą argumenty wyrażające nazwę produktu (typu str) i jego cenę (typu float) -- w takiej kolejności -- i ustawiającą atrybuty `name` (typu str) oraz `price` (typu float)
 
     def __init__(self, name: str, price: float):
-        if not isinstance(name, str) or not isinstance(price, float):
-            raise TypeError("Niewłaściwe typy danych")
         if price <= 0:
             raise ValueError
         pierwsza_cyfra = -1
