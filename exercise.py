@@ -5,7 +5,7 @@ class Product:
     # FIXME: klasa powinna posiadać metodę inicjalizacyjną przyjmującą argumenty wyrażające nazwę produktu (typu str) i jego cenę (typu float) -- w takiej kolejności -- i ustawiającą atrybuty `name` (typu str) oraz `price` (typu float)
 
     def __init__(self, name: str, price: float):
-        if price <= 0:
+        if price < 0:
             raise ValueError
         pierwsza_cyfra = -1
         for i, char in enumerate(name):
@@ -22,6 +22,8 @@ class Product:
         self.price = price
 
     def __eq__(self, other):
+        if not isinstance(other, Product):
+            return False
         return (self.name == other.name) and (self.price == other.price)  # FIXME: zwróć odpowiednią wartość
  
     def __hash__(self):
