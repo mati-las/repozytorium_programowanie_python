@@ -44,7 +44,7 @@ class ListServer:
     n_max_returned_entries: int = 6
     def __init__(self, products_list: list[Product]):
         self.products: list[Product]  = list(products_list)
-    def get_entries(self, n_letters: int):
+    def get_entries(self, n_letters: int = 1):
         wyniki = []
         for x in self.products:
             nazwa = x.name
@@ -55,14 +55,27 @@ class ListServer:
                     break
             if indeks == n_letters:
                 wyniki.append(x)
+        wyniki.sort(key=lambda x: x[1])
         return wyniki[:self.n_max_returned_entries]
     
  
  
 class MapServer:
-    pass
- 
- 
+    n_max_returned_entries: int = 6
+    def __init__(self, products_list: list[Product]):
+        self.products: dict[str, Product]= {}
+        for x in products_list:
+            self.products[x.name] = x
+    def get_entries(self, n_letters: int = 1):
+        wyniki = []
+        for x, y in self.products.items():
+            nazwa = x
+            if len(nazwa) == n_letters:
+                wyniki.append(y)
+        wyniki.sort(key=lambda x: x[1])
+        return wyniki[:self.n_max_returned_entries]
+    
+
 class Client:
     # FIXME: klasa powinna posiadać metodę inicjalizacyjną przyjmującą obiekt reprezentujący serwer
 
