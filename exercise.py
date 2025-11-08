@@ -59,7 +59,7 @@ class ListServer(Server):
                 if j.isdigit():
                     indeks = i # indeks pierwszej cyfry odpowiada długości części literowej
                     break
-            if indeks == n_letters:
+            if indeks == n_letters and (len(nazwa)-indeks == 2 or len(nazwa)-indeks == 3):
                 wyniki.append(x)
         wyniki.sort(key=lambda x: x.price)
         if len(wyniki) > self.n_max_returned_entries:
@@ -77,7 +77,12 @@ class MapServer(Server):
         wyniki = []
         for x, y in self.products.items():
             nazwa = x
-            if len(nazwa) == n_letters:
+            indeks = -1
+            for i, j in enumerate(nazwa):
+                if j.isdigit():
+                    indeks = i # indeks pierwszej cyfry odpowiada długości części literowej
+                    break
+            if indeks == n_letters and (len(nazwa)-indeks == 2 or len(nazwa)-indeks == 3):
                 wyniki.append(y)
         wyniki.sort(key=lambda x: x.price)
         if len(wyniki) > self.n_max_returned_entries:
