@@ -1,2 +1,2 @@
 # repozytorium_programowanie_python
-repozytorium do zadania serwery
+repo testowe do wrzucenia zadanka z pythona z zaawansowanego programowania obiektowego
