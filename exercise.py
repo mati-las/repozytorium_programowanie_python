@@ -1,5 +1,5 @@
 from typing import Optional
- 
+from abc import ABC, abstractmethod
  
 class Product:
     # FIXME: klasa powinna posiadać metodę inicjalizacyjną przyjmującą argumenty wyrażające nazwę produktu (typu str) i jego cenę (typu float) -- w takiej kolejności -- i ustawiającą atrybuty `name` (typu str) oraz `price` (typu float)
@@ -30,7 +30,7 @@ class Product:
         return hash((self.name, self.price))
  
  
-class TooManyProductsFoundError:
+class TooManyProductsFoundError(Exception):
     # Reprezentuje wyjątek związany ze znalezieniem zbyt dużej liczby produktów.
     pass
  
@@ -39,9 +39,15 @@ class TooManyProductsFoundError:
 #   (1) metodę inicjalizacyjną przyjmującą listę obiektów typu `Product` i ustawiającą atrybut `products` zgodnie z typem reprezentacji produktów na danym serwerze,
 #   (2) możliwość odwołania się do atrybutu klasowego `n_max_returned_entries` (typu int) wyrażający maksymalną dopuszczalną liczbę wyników wyszukiwania,
 #   (3) możliwość odwołania się do metody `get_entries(self, n_letters)` zwracającą listę produktów spełniających kryterium wyszukiwania
- 
-class ListServer:
-    n_max_returned_entries: int = 6
+
+class Server(ABC):
+    n_max_returned_entries: int = 3
+
+    @abstractmethod
+    def get_entries(self, n_letters: int = 1):
+        pass
+
+class ListServer(Server): 
     def __init__(self, products_list: list[Product]):
         self.products: list[Product]  = list(products_list)
     def get_entries(self, n_letters: int = 1):
@@ -55,13 +61,14 @@ class ListServer:
                     break
             if indeks == n_letters:
                 wyniki.append(x)
-        wyniki.sort(key=lambda x: x[1])
-        return wyniki[:self.n_max_returned_entries]
+        wyniki.sort(key=lambda x: x.price)
+        if len(wyniki) > self.n_max_returned_entries:
+            raise TooManyProductsFoundError
+        return wyniki
     
  
  
-class MapServer:
-    n_max_returned_entries: int = 6
+class MapServer(Server):
     def __init__(self, products_list: list[Product]):
         self.products: dict[str, Product]= {}
         for x in products_list:
@@ -72,12 +79,21 @@ class MapServer:
             nazwa = x
             if len(nazwa) == n_letters:
                 wyniki.append(y)
-        wyniki.sort(key=lambda x: x[1])
-        return wyniki[:self.n_max_returned_entries]
+        wyniki.sort(key=lambda x: x.price)
+        if len(wyniki) > self.n_max_returned_entries:
+            raise TooManyProductsFoundError
+        return wyniki
     
 
 class Client:
-    # FIXME: klasa powinna posiadać metodę inicjalizacyjną przyjmującą obiekt reprezentujący serwer
+    def __init__(self, server: Server):
+        self.server = server
 
     def get_total_price(self, n_letters: Optional[int]) -> Optional[float]:
-        raise NotImplementedError()
+        try:
+            produkty = self.server.get_entries(n_letters)
+            if not produkty:
+                return None
+            return sum(p.price for p in produkty)
+        except TooManyProductsFoundError:
+            return None
